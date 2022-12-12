@@ -3,18 +3,17 @@ import matplotlib.pyplot as plt
 import ImportCSVData as dt
 from matplotlib.widgets import Button
 
-
-file = 'results/test.csv'
-
+file = 'results/12-12-2022_11-20-17_R-1_SYNC-true_POSITIONS.csv'
 data = dt.getData(file)
+
 rounds = dt.getElmentsAtIndex(data, 0)
 rounds = dt.getRounds(rounds)
-
 x = dt.getXByRound(0, data)
 y = dt.getYByRound(0, data)
-
+clusterSizes = dt.getClusterSizes(list(zip(x,y)))
 xmean = np.mean(x)
 ymean = np.mean(y)
+print(clusterSizes)
 
 fig, ax = plt.subplots()
 fig.subplots_adjust(bottom=0.2)
@@ -51,6 +50,9 @@ class Index:
         g.set_ydata(ymean)
         txt.set_text("Round: " + str(rounds[self.ind]))
         plt.draw()
+
+    def annotateData(): #TODO
+        ax.annotate()
 
 callback = Index()
 axprev = fig.add_axes([0.7, 0.05, 0.1, 0.075])
