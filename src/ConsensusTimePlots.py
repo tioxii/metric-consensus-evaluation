@@ -42,7 +42,7 @@ def convertToDiagram(group : list, data : list[tuple], ax):
         participants = sorted(set(participants))
         roundsMean = mapToAverage(participants, filteredData)
         #Create graph
-        ax.plot(participants, roundsMean, label='Synchronous')
+        ax.plot(participants, roundsMean, label=str(val))
 
 def convertToDiagramSingle(data : list[tuple], ax):
     participants = dt.getElmentsAtIndex(data, 0)
@@ -50,22 +50,22 @@ def convertToDiagramSingle(data : list[tuple], ax):
     participants = sorted(set(participants))
     roundsMean = mapToAverage(participants, data)
     #Create graph
-    ax.plot(participants, roundsMean, label='Synchronous')
+    return ax.plot(participants, roundsMean)
 
 def main():
-    isAllInSingleFile = False
+    isAllInSingleFile = True
     colors = ['blue', 'orange', 'green', 'red']
     
     #Files
-    path = "results/06-12-2022_13-02-49_R-100_SYNC-true.csv" # Base plot
+    path = "results/OneLargeCluster_R-100_SYNC-true.csv" # Base plot
     data = dt.getData(path)
     
-    path2 = ""
+    path2 = "results/FullCircle_R-100_SYNC-true.csv" # Full circle
     data2 = dt.getData(path2)
-
-    path3 = ""
-    data3 = dt.getData(path3)
     
+    path3 = "results/FarAway_R-100_SYNC-true.csv"
+    data3 = dt.getData(path3)
+
     #Figure
     fig, ax = plt.subplots()
 
@@ -73,19 +73,25 @@ def main():
     if len(data[0]) > 2 and isAllInSingleFile:
         group = dt.getElmentsAtIndex(data, 2)
         group = sorted(set(group))
-        #convertToDiagram(group, data, ax)
+        convertToDiagram(group, data, ax)
     else:
-        convertToDiagramSingle(data, ax)
-        convertToDiagramSingle(data2, ax)
-        convertToDiagramSingle(data3, ax)
+        #l, = convertToDiagramSingle(data, ax)
+        g, = convertToDiagramSingle(data2, ax)
+        #f, = convertToDiagramSingle(data3, ax)
+        #convertToDiagramSingle(data3, ax)
+        #l.set_label("All Random")
+        g.set_label("Full Circle")
+        #f.set_label("Two Far Away (100)")
         
+
     #Plot
     ax.set_ylim([0,6])
     ax.set_xscale('log')
     ax.grid(True)
-    ax.set_title('Synchronous Metric Consensus Process')
+    ax.set_title('Beta-Analysis (Synchronous)')
     ax.set_xlabel('Participants')
     ax.set_ylabel('Rounds / log(Participants)')
+    ax.legend()
 
     plt.show()
 
