@@ -33,17 +33,18 @@ def getYByRound(round : int, data):
     result = map(lambda x: float(x), result)
     return list(result)
 
-def compareTuple(tupleOne : tuple, tupleTwo : tuple):
+def compareTuple(tupleOne : tuple, tupleTwo : tuple) -> bool:
     result = True
     for i in range(len(tupleOne)):
         result = result and (tupleOne[i] == tupleTwo[i])
     return result
 
 
-def getClusterSize(position, positions):
+def getClusterSize(position : tuple, positions) -> int:
     filtered = list(filter(lambda x: compareTuple(x, position), positions))
     return len(filtered)
 
-def getClusterSizes(positions): #TODO
+def getClusterSizes(positions : set): #TODO
     pos_set = sorted(set(positions))
-    return list(map(lambda x: getClusterSize(x, positions), pos_set))
+    clusters = list(map(lambda x: getClusterSize(x, positions), pos_set))
+    return list(zip(pos_set, clusters))
