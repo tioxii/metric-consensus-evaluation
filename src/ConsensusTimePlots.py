@@ -53,16 +53,16 @@ def convertToDiagramSingle(data : list[tuple], ax):
     return ax.plot(participants, roundsMean)
 
 def main():
-    isAllInSingleFile = True
+    isAllInSingleFile = False
 
     #Files
-    path = "results/OneLargeCluster_R-100_SYNC-true.csv" # Base plot
+    path = "results/06-12-2022_13-02-49_R-100_SYNC-true.csv" # Base plot
     data = dt.getData(path)
     
     path2 = "results/FullCircle_R-100_SYNC-true.csv" # Full circle
     data2 = dt.getData(path2)
     
-    path3 = "results/FarAway_R-100_SYNC-true.csv"
+    path3 = "results/TwoFarAway_R-100_SYNC-true.csv"
     data3 = dt.getData(path3)
 
     #Figure
@@ -74,12 +74,12 @@ def main():
         group = sorted(set(group))
         convertToDiagram(group, data, ax)
     else:
-        #l, = convertToDiagramSingle(data, ax)
+        l, = convertToDiagramSingle(data, ax)
         g, = convertToDiagramSingle(data2, ax)
-        #f, = convertToDiagramSingle(data3, ax)
-        #l.set_label("All Random")
+        f, = convertToDiagramSingle(data3, ax)
+        l.set_label("All Random")
         g.set_label("Full Circle")
-        #f.set_label("Two Far Away (100)")
+        f.set_label("Two Far Away (100)")
         
 
     #Plot
