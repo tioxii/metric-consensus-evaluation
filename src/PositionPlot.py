@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import ImportCSVData as dt
 from matplotlib.widgets import Button
 
-file = 'results/test.csv'
+file = 'positions/TwoFarAway100_R-1_SYNC-true_POSITIONS.csv'
 data = dt.getData(file)
 
 rounds = dt.getElmentsAtIndex(data, 0)

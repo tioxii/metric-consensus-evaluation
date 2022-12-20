@@ -54,8 +54,7 @@ def convertToDiagramSingle(data : list[tuple], ax):
 
 def main():
     isAllInSingleFile = True
-    colors = ['blue', 'orange', 'green', 'red']
-    
+
     #Files
     path = "results/OneLargeCluster_R-100_SYNC-true.csv" # Base plot
     data = dt.getData(path)
@@ -78,7 +77,6 @@ def main():
         #l, = convertToDiagramSingle(data, ax)
         g, = convertToDiagramSingle(data2, ax)
         #f, = convertToDiagramSingle(data3, ax)
-        #convertToDiagramSingle(data3, ax)
         #l.set_label("All Random")
         g.set_label("Full Circle")
         #f.set_label("Two Far Away (100)")
