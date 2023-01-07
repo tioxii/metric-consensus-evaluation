@@ -47,6 +47,7 @@ def convertToDiagram(group : list, data : list[tuple], ax):
 def normalize(n : int, round : int) -> float:
     return round / (log(n))
 
+#Normalize Data
 def normalizeData(data : tuple):
     for tupe in data:
         tupe[0] = int(tupe[0])
