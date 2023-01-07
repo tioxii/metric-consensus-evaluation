@@ -1,4 +1,3 @@
-from ast import List
 import csv
 
 def getData(file_name):

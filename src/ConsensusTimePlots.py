@@ -1,24 +1,23 @@
+import os
+import re
+from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 import ImportCSVData as dt
 from numpy import log
 from statistics import mean
 from statistics import stdev
 
-#Normalize for synchronous process.
-def normalize(n : int, round : int) -> float:
-    return round / log(n)
-
 #Calculate mean.
 def calculateMean(n : int, rounds : list[tuple]) -> float:
     filteredList = list(filter(lambda x: int(x[0]) == n, rounds))
-    filteredList = list(map(lambda x: normalize(n, int(x[1])), filteredList))
-    average = mean(filteredList)
+    filteredList = list(map(lambda x: x[1], filteredList))
+    average : float = mean(filteredList)
     return average
 
 #Calculate standard deviation.
 def calculateStandardDeviation(n : int, rounds : list[tuple]) -> list[float]:
     filteredList = list(filter(lambda x: int(x[0]) == n, rounds))
-    filteredList = list(map(lambda x: normalize(n, int(x[1])), filteredList))
+    filteredList = list(map(lambda x: x[1], filteredList))
     deviation = stdev(filteredList)
     return deviation
 
@@ -44,54 +43,67 @@ def convertToDiagram(group : list, data : list[tuple], ax):
         #Create graph
         ax.plot(participants, roundsMean, label=str(val))
 
-def convertToDiagramSingle(data : list[tuple], ax):
-    participants = dt.getElmentsAtIndex(data, 0)
-    participants = list(map(lambda x: int(x), participants))
-    participants = sorted(set(participants))
-    roundsMean = mapToAverage(participants, data)
-    #Create graph
-    return ax.plot(participants, roundsMean)
+#Normalize for synchronous process. #log(n) - log(log(n)) for full circle
+def normalize(n : int, round : int) -> float:
+    return round / (log(n))
 
-def main():
-    isAllInSingleFile = False
+def normalizeData(data : tuple):
+    for tupe in data:
+        tupe[0] = int(tupe[0])
+        tupe[1] = normalize(tupe[0], int(tupe[1]))
 
-    #Files
-    path = "results/06-12-2022_13-02-49_R-100_SYNC-true.csv" # Base plot
+def transform(path : str, ax : Axes):
     data = dt.getData(path)
     
-    path2 = "results/FullCircle_R-100_SYNC-true.csv" # Full circle
-    data2 = dt.getData(path2)
-    
-    path3 = "results/TwoFarAway_R-100_SYNC-true.csv"
-    data3 = dt.getData(path3)
+    normalizeData(data)
+    participants = sorted(set(dt.getElmentsAtIndex(data, 0)))
+    roundsMean = mapToAverage(participants, data)
+    l, = ax.plot(participants, roundsMean)
+    return l
 
-    #Figure
-    fig, ax = plt.subplots()
-
-    #Data
-    if len(data[0]) > 2 and isAllInSingleFile:
-        group = dt.getElmentsAtIndex(data, 2)
-        group = sorted(set(group))
-        convertToDiagram(group, data, ax)
-    else:
-        l, = convertToDiagramSingle(data, ax)
-        g, = convertToDiagramSingle(data2, ax)
-        f, = convertToDiagramSingle(data3, ax)
-        l.set_label("All Random")
-        g.set_label("Full Circle")
-        f.set_label("Two Far Away (100)")
-        
-
-    #Plot
-    ax.set_ylim([0,6])
+def plotSettings(ax : Axes):
+    ax.set_ylim([0,10])
     ax.set_xscale('log')
     ax.grid(True)
-    ax.set_title('Beta-Analysis (Synchronous)')
     ax.set_xlabel('Participants')
     ax.set_ylabel('Rounds / log(Participants)')
     ax.legend()
+    plt.show() 
 
-    plt.show()
+def createDiagrammFromDirectory(path : str):
+    dirName = os.path.dirname(path)
+    files = os.listdir(path)
+    fig, ax = plt.subplots()
+    lines = list(map(lambda x: transform(path + x, ax), files))
+    
+    for i in range(len(lines)):
+        label = re.split("(_.*)", files[i])[0]
+        lines[i].set_label(label)
+
+    ax.set_title(dirName)
+    plotSettings(ax)
+    
+def createDiagrammFromFile(path : str):
+    fileName = os.path.basename(path)
+    data = dt.getData(path)
+    if(len(data[0])):
+        fig, ax = plt.subplots()
+        normalizeData(data)
+        group = dt.getElmentsAtIndex(data, 2)
+        convertToDiagram(group, data, ax)
+        title = re.split("(_.*)", fileName)[0]
+        ax.set_title(title)
+        plotSettings(ax)
+
+def main():
+    path = "results/Synchronous/" 
+    isDirectory = os.path.isdir(path)
+    isFile = os.path.isfile(path)
+
+    if(isDirectory):
+        createDiagrammFromDirectory(path)
+    if(isFile):
+        createDiagrammFromFile
 
 if __name__ == "__main__":
     main()
