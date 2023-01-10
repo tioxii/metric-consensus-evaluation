@@ -4,7 +4,7 @@ import ImportCSVData as dt
 from matplotlib.widgets import Button
 
 def main():
-    file = 'positions/test.csv'
+    file = 'positions/12-12-2022_10-46-16_R-1_SYNC-true_POSITIONS.csv'
     data = dt.getData(file)
 
     rounds = dt.getElmentsAtIndex(data, 0)
@@ -68,6 +68,8 @@ def main():
     callback = Index()
     axprev = fig.add_axes([0.7, 0.05, 0.1, 0.075])
     axnext = fig.add_axes([0.81, 0.05, 0.1, 0.075])
+    ax.set_xlim([0,1])
+    ax.set_ylim([0,1])
     bnext = Button(axnext, 'Next')
     bnext.on_clicked(callback.next)
     bprev = Button(axprev, 'Previous')
