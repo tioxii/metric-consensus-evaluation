@@ -1,10 +1,14 @@
+from matplotlib import rc
 import numpy as np
 import matplotlib.pyplot as plt
 import ImportCSVData as dt
 from matplotlib.widgets import Button
 
 def main():
-    file = 'positions/12-12-2022_10-46-16_R-1_SYNC-true_POSITIONS.csv'
+    rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
+    rc('text', usetex=True)
+
+    file = 'positions/12-12-2022_11-19-04_R-1_SYNC-true_POSITIONS.csv'
     data = dt.getData(file)
 
     rounds = dt.getElmentsAtIndex(data, 0)
@@ -21,10 +25,10 @@ def main():
     g, = ax.plot(xmean, ymean, 'o')
     ax.grid(True)
 
-    axround = fig.add_axes([0.4, 0.05, 0.15, 0.075])
-    axround.get_xaxis().set_visible(False)
-    axround.get_yaxis().set_visible(False)
-    txt = axround.text(0.15,0.4, "Round: " + str(0))
+    #axround = fig.add_axes([0.4, 0.05, 0.15, 0.075])
+    #axround.get_xaxis().set_visible(False)
+    #axround.get_yaxis().set_visible(False)
+    #txt = axround.text(0.15,0.4, "Round: " + str(0))
 
     class Index:
         ind = 0
@@ -65,15 +69,18 @@ def main():
                 x.remove()
             self.anns = []
 
-    callback = Index()
-    axprev = fig.add_axes([0.7, 0.05, 0.1, 0.075])
-    axnext = fig.add_axes([0.81, 0.05, 0.1, 0.075])
+    #callback = Index()
+    #axprev = fig.add_axes([0.7, 0.05, 0.1, 0.075])
+    #axnext = fig.add_axes([0.81, 0.05, 0.1, 0.075])
     ax.set_xlim([0,1])
     ax.set_ylim([0,1])
-    bnext = Button(axnext, 'Next')
-    bnext.on_clicked(callback.next)
-    bprev = Button(axprev, 'Previous')
-    bprev.on_clicked(callback.prev)
+    ax.set_title('Two Choices')
+    ax.set_xlabel('X-Axis')
+    ax.set_ylabel('Y-Axis')
+    #bnext = Button(axnext, 'Next')
+    #bnext.on_clicked(callback.next)
+    #bprev = Button(axprev, 'Previous')
+    #bprev.on_clicked(callback.prev)
     plt.show()
 
 if __name__ == '__main__':

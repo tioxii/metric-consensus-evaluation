@@ -24,7 +24,7 @@ def calcPotentialForConfiguration(data):
     return list(map(lambda x: calcPotentialForPoint(x, data), data))
 
 def main():
-    path = 'positions/12-12-2022_11-20-17_R-1_SYNC-true_POSITIONS.csv'
+    path = 'positions/12-12-2022_10-46-16_R-1_SYNC-true_POSITIONS.csv'
     data = dt.getData(path)
 
     #3571.8849214112233 for Circle1000
@@ -35,8 +35,9 @@ def main():
     xval = dt.getXByRound(rounds[0], data)
     yval = dt.getYByRound(rounds[0], data)
     points = list(zip(xval,yval))
+    numberOfPoints = len(points)
     result = calcPotentialForConfiguration(points)
-    print(mean(result) / 100 - stdev(result) / 100)
+    print((mean(result) - stdev(result)) / numberOfPoints)
 
 if __name__ == '__main__':
     main()

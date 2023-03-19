@@ -12,11 +12,11 @@ def getData(file_name):
     file.close()
     return rows
 
-def getElmentsAtIndex(data, index : int):
+def getElmentsAtIndex(data, index : int) -> list:
     result = map(lambda x: x[index], data)
-    return result
+    return list(result)
 
-def getRounds(rounds):
+def getRounds(rounds) -> list:
     result = map(lambda x: int(x), rounds)
     return sorted(set(result))
 

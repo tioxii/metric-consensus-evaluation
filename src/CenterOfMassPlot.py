@@ -10,7 +10,7 @@ def calculateMeanForRound(r : int, data):
     return (xmean, ymean)
 
 def main():
-    file = 'positions/test.csv'
+    file = 'positions/Circle100_R-1_SYNC-true_POSITIONS.csv'
     data = dt.getData(file)
 
     rounds = dt.getElmentsAtIndex(data, 0)
@@ -22,9 +22,9 @@ def main():
     y = list(map(lambda y: y[1], meanOfEachRound))
 
     fig, ax = plt.subplots()
-    l, = ax.plot(x, y, '<-', color='orange')
-    ax.set_xlim([0,0.5])
-    ax.set_ylim([0,0.5])
+    l, = ax.plot(x, y, '.-', color='orange')
+    ax.set_xlim([0,1])
+    ax.set_ylim([0,1])
     plt.grid()
     plt.show()
     

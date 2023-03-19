@@ -1,5 +1,6 @@
 import os
 import re
+from matplotlib import rc
 from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 import ImportCSVData as dt
@@ -43,9 +44,15 @@ def convertToDiagram(group : list, data : list[tuple], ax):
         #Create graph
         ax.plot(participants, roundsMean, label=str(val))
 
+
+__sync : bool = True
+
 #Normalize for synchronous process. #log(n) - log(log(n)) for full circle
-def normalize(n : int, round : int) -> float:
-    return round / (log(n))
+def normalize(n : int, consensusTime : int) -> float:
+    if(__sync):
+        return consensusTime / (log(n))
+    else:
+        return consensusTime / (n * log(n))
 
 #Normalize Data
 def normalizeData(data : tuple):
@@ -62,12 +69,13 @@ def transform(path : str, ax : Axes):
     l, = ax.plot(participants, roundsMean)
     return l
 
-def plotSettings(ax : Axes):
+def plotSettings(ax : Axes, dirName : str):
     ax.set_ylim([0,10])
     ax.set_xscale('log')
     ax.grid(True)
+    ax.set_title(r'Two Choices - Closest to Mean - Synchronous')
     ax.set_xlabel('Participants')
-    ax.set_ylabel('Rounds / log(Participants)')
+    ax.set_ylabel(r'Rounds / log(Participants)')
     ax.legend()
     plt.show() 
 
@@ -81,8 +89,8 @@ def createDiagrammFromDirectory(path : str):
         label = re.split("(_.*)", files[i])[0]
         lines[i].set_label(label)
 
-    ax.set_title(dirName)
-    plotSettings(ax)
+    dirName = re.split("(/)", dirName)[2]
+    plotSettings(ax, dirName)
     
 def createDiagrammFromFile(path : str):
     fileName = os.path.basename(path)
@@ -91,20 +99,25 @@ def createDiagrammFromFile(path : str):
         fig, ax = plt.subplots()
         normalizeData(data)
         group = dt.getElmentsAtIndex(data, 2)
+        group = sorted(set(group))
         convertToDiagram(group, data, ax)
         title = re.split("(_.*)", fileName)[0]
-        ax.set_title(title)
-        plotSettings(ax)
+        plotSettings(ax, title)
 
 def main():
-    path = "results/Synchronous/" 
+    rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
+    rc('text', usetex=True)
+
+    direc = "results/Two Choices - Closest to Mean - Synchronous/"
+    file = ""
+    path = direc + file
     isDirectory = os.path.isdir(path)
     isFile = os.path.isfile(path)
 
     if(isDirectory):
         createDiagrammFromDirectory(path)
     if(isFile):
-        createDiagrammFromFile
+        createDiagrammFromFile(path)
 
 if __name__ == "__main__":
     main()
