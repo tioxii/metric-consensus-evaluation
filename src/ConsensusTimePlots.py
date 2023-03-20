@@ -73,7 +73,7 @@ def plotSettings(ax : Axes, dirName : str):
     ax.set_ylim([0,10])
     ax.set_xscale('log')
     ax.grid(True)
-    ax.set_title(r'Two Choices - Closest to Mean - Synchronous')
+    ax.set_title(r'Random Clusters - Closest Node - Synchronous')
     ax.set_xlabel('Participants')
     ax.set_ylabel(r'Rounds / log(Participants)')
     ax.legend()
@@ -108,8 +108,8 @@ def main():
     rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
     rc('text', usetex=True)
 
-    direc = "results/Two Choices - Closest to Mean - Synchronous/"
-    file = ""
+    direc = 'results/'
+    file = 'Random Clusters - Closest Node - Synchronous' + '/'
     path = direc + file
     isDirectory = os.path.isdir(path)
     isFile = os.path.isfile(path)

@@ -3,15 +3,14 @@ import ImportCSVData as dt
 import matplotlib.pyplot as plt
 from matplotlib import rc
 
-__TERMINATION_CONSTANT = 10000
-__synchronous : bool = True
+__TERMINATION_CONSTANT : int = 10000
 
-def lookForGroup(val : float, tup : tuple, index : int) -> bool:
+def lookForGroup(val : float, tup : tuple[str, str, str], index : int) -> bool:
     if(round(float(tup[index]), 2) == val):
         return True
     return False
 
-def calculatePercantage(n : int, lst : list, synchronous : bool) -> float:
+def calculatePercantage(n : int, lst : list[tuple[str, str, str]], synchronous : bool) -> float:
     group = list(filter(lambda tup: lookForGroup(float(n), tup, 0), lst))
     counter : float = 0
 
@@ -38,7 +37,7 @@ def transformData(path : str) -> list:
     resultList : list = []
     for element in groups:
         element = float(element)
-        group = list(filter(lambda tup: lookForGroup(element, tup, 2), data))
+        group : list[str] = list(filter(lambda tup: lookForGroup(element, tup, 2), data))
         nodes = list(sorted(set(map(lambda tup: int(tup[0]), group))))
         for n in nodes:
             result = (element, calculatePercantage(n, group, synchronous), n)
