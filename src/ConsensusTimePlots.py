@@ -45,52 +45,63 @@ def convertToDiagram(group : list, data : list[tuple], ax):
         ax.plot(participants, roundsMean, label=str(val))
 
 
-__sync : bool = True
-
 #Normalize for synchronous process. #log(n) - log(log(n)) for full circle
-def normalize(n : int, consensusTime : int) -> float:
-    if(__sync):
+def normalize(n : int, consensusTime : int, synchronous : bool) -> float:
+    if(synchronous):
         return consensusTime / (log(n))
     else:
         return consensusTime / (n * log(n))
 
 #Normalize Data
-def normalizeData(data : tuple):
+def normalizeData(data : tuple, synchronous : bool):
     for tupe in data:
         tupe[0] = int(tupe[0])
-        tupe[1] = normalize(tupe[0], int(tupe[1]))
+        tupe[1] = normalize(tupe[0], int(tupe[1]), synchronous)
 
-def transform(path : str, ax : Axes):
+def transform(path : str, ax : Axes, fileName : str):
     data = dt.getData(path)
     
-    normalizeData(data)
+    synchronousStr : str = re.split('(.*)(SYNC-)(.*)(\.csv)', path)[3]
+
+    if(synchronousStr == 'true'):
+        synchronous = True
+    else:
+        synchronous = False
+
+    normalizeData(data, synchronous)
     participants = sorted(set(dt.getElmentsAtIndex(data, 0)))
+    #roundsStdev = mapToStandardDeviation(participants, data)
     roundsMean = mapToAverage(participants, data)
-    l, = ax.plot(participants, roundsMean)
+    l, = ax.plot(participants, roundsMean, label= 'Synchronous' if synchronous else 'Asynchronous ')
     return l
 
 def plotSettings(ax : Axes, dirName : str):
     ax.set_ylim([0,10])
     ax.set_xscale('log')
     ax.grid(True)
-    ax.set_title(r'Random Clusters - Closest Node - Synchronous')
-    ax.set_xlabel('Participants')
-    ax.set_ylabel(r'Rounds / log(Participants)')
-    ax.legend()
-    plt.show() 
+    ax.set_title(r'' + dirName)
+    ax.set_xlabel(r'Number of Nodes $n$')
+    ax.set_ylabel(r'Normalized Consensus Time')
+    ax.legend() 
 
-def createDiagrammFromDirectory(path : str):
+def createDiagrammFromDirectory(path : str, shouldSave : bool = False):
     dirName = os.path.dirname(path)
     files = os.listdir(path)
     fig, ax = plt.subplots()
-    lines = list(map(lambda x: transform(path + x, ax), files))
+    lines = list(map(lambda x: transform(path + x, ax, x), files))
     
-    for i in range(len(lines)):
-        label = re.split("(_.*)", files[i])[0]
-        lines[i].set_label(label)
+    #for i in range(len(lines)):
+    #    label = re.split("(_.*)", files[i])[0]
+    #    lines[i].set_label(label)
 
-    dirName = re.split("(/)", dirName)[2]
+    dirName = re.split("(/)", dirName)[4]
+
     plotSettings(ax, dirName)
+    if(shouldSave):
+        fig.set_size_inches(5.1, 3.7)
+        fig.savefig('plots/' + dirName + '.pgf')
+    else:
+        plt.show()
     
 def createDiagrammFromFile(path : str):
     fileName = os.path.basename(path)
@@ -104,20 +115,38 @@ def createDiagrammFromFile(path : str):
         title = re.split("(_.*)", fileName)[0]
         plotSettings(ax, title)
 
-def main():
-    rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
-    rc('text', usetex=True)
+def createAllDiagramms():
+    direc = 'results/consensusTime/'
+    directories = os.listdir(direc)
 
-    direc = 'results/'
-    file = 'Random Clusters - Closest Node - Synchronous' + '/'
+    for dir in directories:
+        createDiagrammFromDirectory(direc + dir + '/', True)
+
+def createSingleDiagramm(file : str):
+    direc = 'results/consensusTime/'
+    file += '/'
     path = direc + file
     isDirectory = os.path.isdir(path)
     isFile = os.path.isfile(path)
 
     if(isDirectory):
-        createDiagrammFromDirectory(path)
+        createDiagrammFromDirectory(path, False)
     if(isFile):
         createDiagrammFromFile(path)
+
+def main():
+    rc('pgf', texsystem='pdflatex')
+    rc('pgf', rcfonts=False)
+    rc('font', **{'family': 'serif', 'serif': ['Palatino']})
+    rc('text', usetex=True)
+
+    file : str = 'Random Clusters - Closest Node'
+    shouldCreateAll : bool = False
+
+    if(shouldCreateAll):
+        createAllDiagramms()
+    else:
+        createSingleDiagramm(file)
 
 if __name__ == "__main__":
     main()

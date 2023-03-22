@@ -5,10 +5,12 @@ import ImportCSVData as dt
 from matplotlib.widgets import Button
 
 def main():
-    rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
+    rc('pgf', texsystem='pdflatex')
+    rc('pgf', rcfonts=False)
+    rc('font', **{'family': 'serif', 'serif': ['Palatino']})
     rc('text', usetex=True)
 
-    file = 'positions/12-12-2022_11-19-04_R-1_SYNC-true_POSITIONS.csv'
+    file = 'results/positions/12-12-2022_10-46-16_R-1_SYNC-true_POSITIONS.csv'
     data = dt.getData(file)
 
     rounds = dt.getElmentsAtIndex(data, 0)
@@ -20,7 +22,7 @@ def main():
     ymean = np.mean(y)
 
     fig, ax = plt.subplots()
-    fig.subplots_adjust(bottom=0.2)
+    #fig.subplots_adjust(bottom=0.2)
     l, = ax.plot(x, y, 'o')
     g, = ax.plot(xmean, ymean, 'o')
     ax.grid(True)
@@ -74,14 +76,16 @@ def main():
     #axnext = fig.add_axes([0.81, 0.05, 0.1, 0.075])
     ax.set_xlim([0,1])
     ax.set_ylim([0,1])
-    ax.set_title('Two Choices')
+    ax.set_title('Random Positions')
     ax.set_xlabel('X-Axis')
     ax.set_ylabel('Y-Axis')
     #bnext = Button(axnext, 'Next')
     #bnext.on_clicked(callback.next)
     #bprev = Button(axprev, 'Previous')
     #bprev.on_clicked(callback.prev)
-    plt.show()
+    fig.set_size_inches(5.1, 5.1)
+    #plt.show()
+    fig.savefig('plots/' + 'Random Positions' + '.pgf')
 
 if __name__ == '__main__':
     main()
