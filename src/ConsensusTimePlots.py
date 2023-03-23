@@ -35,14 +35,14 @@ def mapToStandardDeviation(participants : list[int], data : list[tuple]) -> list
 def convertToDiagram(group : list, data : list[tuple], ax):
     for val in group:
         #Filter data by third row
-        filteredData = list(filter(lambda x: x[2] == val, data))
+        filteredData = list(filter(lambda x: float(x[2]) == val, data))
         #Calculate Values
         participants = dt.getElmentsAtIndex(filteredData, 0)
         participants = list(map(lambda x: int(x), participants))
         participants = sorted(set(participants))
         roundsMean = mapToAverage(participants, filteredData)
         #Create graph
-        ax.plot(participants, roundsMean, label=str(val))
+        ax.plot(participants, roundsMean, label= r'$\beta =$ ' + str(val))
 
 
 #Normalize for synchronous process. #log(n) - log(log(n)) for full circle
@@ -76,10 +76,10 @@ def transform(path : str, ax : Axes, fileName : str):
     return l
 
 def plotSettings(ax : Axes, dirName : str):
-    ax.set_ylim([0,10])
+    ax.set_ylim([0,6])
     ax.set_xscale('log')
     ax.grid(True)
-    ax.set_title(r'' + dirName)
+    ax.set_title(r'$(1 + \beta)$ - Closest Node - Asynchronous')
     ax.set_xlabel(r'Number of Nodes $n$')
     ax.set_ylabel(r'Normalized Consensus Time')
     ax.legend() 
@@ -106,14 +106,19 @@ def createDiagrammFromDirectory(path : str, shouldSave : bool = False):
 def createDiagrammFromFile(path : str):
     fileName = os.path.basename(path)
     data = dt.getData(path)
+    
     if(len(data[0])):
         fig, ax = plt.subplots()
-        normalizeData(data)
-        group = dt.getElmentsAtIndex(data, 2)
+        normalizeData(data, False)
+        group = list(map(lambda x: float(x[2]), data))
         group = sorted(set(group))
+        print(group)
         convertToDiagram(group, data, ax)
         title = re.split("(_.*)", fileName)[0]
         plotSettings(ax, title)
+        fig.set_size_inches(5.1, 3.7)
+        plt.show()
+        fig.savefig('plots/' + 'BetaAnalysis - Asynchronous' + '.pgf')
 
 def createAllDiagramms():
     direc = 'results/consensusTime/'
@@ -123,11 +128,12 @@ def createAllDiagramms():
         createDiagrammFromDirectory(direc + dir + '/', True)
 
 def createSingleDiagramm(file : str):
-    direc = 'results/consensusTime/'
-    file += '/'
+    direc = 'results/'
     path = direc + file
     isDirectory = os.path.isdir(path)
     isFile = os.path.isfile(path)
+
+    print(path)
 
     if(isDirectory):
         createDiagrammFromDirectory(path, False)
@@ -140,7 +146,7 @@ def main():
     rc('font', **{'family': 'serif', 'serif': ['Palatino']})
     rc('text', usetex=True)
 
-    file : str = 'Random Clusters - Closest Node'
+    file : str = 'BetaAnalysis_R-100_SYNC-false.csv'
     shouldCreateAll : bool = False
 
     if(shouldCreateAll):

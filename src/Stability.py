@@ -46,12 +46,14 @@ def transformData(path : str) -> list:
     return resultList
 
 def main():
-    rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
+    rc('pgf', texsystem='pdflatex')
+    rc('pgf', rcfonts=False)
+    rc('font', **{'family': 'serif', 'serif': ['Palatino']})
     rc('text', usetex=True)
 
-    ax = plt.subplot()
+    fig, ax = plt.subplots()
 
-    path : str = 'results/Stability-Analysis/ClosestToMeanStability_R-100_SYNC-false.csv'
+    path : str = 'results/Stability-Analysis/ClosestNodeStability_R-100_SYNC-false.csv'
     transformedData = transformData(path)
     
     n_set : list = sorted(set(map(lambda tup: tup[2], transformedData)))
@@ -63,9 +65,11 @@ def main():
 
     ax.set_xlabel(r'$\approx$ Fraction of dishonest nodes')
     ax.set_ylabel(r'$\approx$ Fraction of corrupted consensus processes')
-    ax.set_title('Stability - Closest to Mean - Asynchronous')
+    ax.set_title('Stability - Closest Node - Asynchronous')
     ax.grid()
+    fig.set_size_inches(5.1, 3.7)
     plt.show()
+    fig.savefig('plots/' + 'Stability - Closest Node - Asynchronous' + '.pgf')
 
 if __name__ == '__main__':
     main()

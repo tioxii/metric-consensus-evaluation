@@ -1,5 +1,7 @@
 import math
 from statistics import mean, stdev
+
+from matplotlib import pyplot as plt
 import ImportCSVData as dt
 
 def calcDistanceEuclidean2D(firstPoint : tuple, secondPoint : tuple) -> float:
@@ -8,9 +10,11 @@ def calcDistanceEuclidean2D(firstPoint : tuple, secondPoint : tuple) -> float:
     return math.sqrt(pow(firstCoord, 2) + pow(secondCoord, 2))
 
 def doesWinAgainstFor(price : tuple[float, float], firstContestor : tuple[float, float], secondContestor : tuple) -> bool:
-    if(calcDistanceEuclidean2D(price, firstContestor) < calcDistanceEuclidean2D(price, secondContestor)):
-        return True
-    return False
+    if(calcDistanceEuclidean2D(price, firstContestor) >= calcDistanceEuclidean2D(price, secondContestor)):
+        return False
+    if(calcDistanceEuclidean2D(price, firstContestor) == 0):
+        return False
+    return True
 
 def calcPotentialForPoint(point : tuple, otherPoints : list[tuple]) -> int:
     counter : int = 0
@@ -26,11 +30,12 @@ def calcPotentialForConfiguration(data) -> list:
 def potential(points : list[tuple[float, float]]) -> float:
     numberOfPoints = len(points)
     result = calcPotentialForConfiguration(points)
+    print(result)
     potential = (mean(result) - stdev(result)) / numberOfPoints
     return potential
 
 def main():
-    path = 'positions/12-12-2022_10-46-16_R-1_SYNC-true_POSITIONS.csv'
+    path = 'results/potentialSpecific/positions/Random Nodes_R-100_SYNC-true_POSITIONS.csv'
     data = dt.getData(path)
 
     #3571.8849214112233 for Circle1000
@@ -38,10 +43,17 @@ def main():
     rounds = dt.getElmentsAtIndex(data, 0)
     rounds = dt.getRounds(rounds)
 
-    xval = dt.getXByRound(rounds[0], data)
-    yval = dt.getYByRound(rounds[0], data)
+    potentials = []
+
+    round : int = 0
+
+    xval = dt.getXByRound(rounds[round], data)
+    yval = dt.getYByRound(rounds[round], data)
     points = list(zip(xval,yval))
     print(potential(points))
+
+    plt.subplots()
+
     
 
 if __name__ == '__main__':
